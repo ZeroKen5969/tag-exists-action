@@ -20,7 +20,7 @@ async function run() {
                 ref: `tags`
             });
             
-            const isFound = getRefResponse.status === 200 && getRefResponse.data.filter((e) => e?.ref?.includes(tag)).length > 0
+            const isFound = getRefResponse.status === 200 && getRefResponse.data.filter((e) => e.ref && e.ref.includes(tag)).length > 0
             if (isFound) {
                 console.log("Tag was found");
                 exists = 'true';
