@@ -14,13 +14,14 @@ async function run() {
         var exists = 'false';
 
         try {
-            const getRefResponse = await github.git.getRef({
+            const getRefResponse = await github.git.listRefs({
                 owner,
                 repo,
-                ref: `tags/${tag}`
+                ref: `tags`
             });
-
-            if (getRefResponse.status === 200) {
+            
+            const isFound = getRefResponse.status === 200 && getRefResponse.data.filter((e) => e?.ref?.includes(tag)).length > 0
+            if (isFound) {
                 console.log("Tag was found");
                 exists = 'true';
             }
