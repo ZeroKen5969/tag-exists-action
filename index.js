@@ -11,7 +11,8 @@ async function run() {
         const { owner, repo } = context.repo
 
         const github = new GitHub(process.env.GITHUB_TOKEN);
-        var exists = 'false';
+        let exists = 'false';
+        let version = 'v1';
 
         try {
             const getRefResponse = await github.git.listRefs({
@@ -19,18 +20,21 @@ async function run() {
                 repo,
                 ref: `tags`
             });
-            
-            const isFound = getRefResponse.status === 200 && getRefResponse.data.filter((e) => e.ref && e.ref.includes(tag)).length > 0
-            if (isFound) {
-                console.log("Tag was found");
-                exists = 'true';
-            }
 
+            if (getRefResponse.status === 200) {
+                const tags = getRefResponse.data.filter((e) => e.ref && e.ref.includes(tag))
+                if (tags.length) {
+                    console.log("Tag was found");
+                    exists = 'true';
+                }
+                version = `v${tags.length + 1}`
+            }
         } catch(error) {
             console.log("Tag was not found");
         }
 
         core.setOutput('exists', exists);
+        core.setOutput('version', version);
     } catch (error) {
         core.setFailed(error.message);
     }
