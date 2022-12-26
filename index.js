@@ -12,7 +12,7 @@ async function run() {
 
         const github = new GitHub(process.env.GITHUB_TOKEN);
         let exists = 'false';
-        let version = 'v1';
+        let version = 1;
 
         try {
             const getRefResponse = await github.git.listRefs({
@@ -27,7 +27,7 @@ async function run() {
                     console.log("Tag was found");
                     exists = 'true';
                 }
-                version = `v${tags.length + 1}`
+                version = tags.length + 1
             }
         } catch(error) {
             console.log("Tag was not found");
