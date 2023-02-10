@@ -8,7 +8,19 @@ async function run() {
         console.log(`Searching for tag: ${tag}`);
 
         // Get owner and repo from context of payload that triggered the action
-        const { owner, repo } = context.repo
+        const repo_name = core.getInput('repo_name');
+        const { owner, repo } = !repo_name ? context.repo : { 
+            owner: repo_name.substr(0, repo_name.indexOf('/')), 
+            repo: repo_name.substr(repo_name.indexOf('/') + 1)
+        };
+
+        if (!owner) {
+            throw new Error(`Could not extract 'owner' from 'repo_name': ${repo_name}.`);
+        }
+
+        if (!repo) {
+            throw new Error(`Could not extract 'repo' from 'repo_name': ${repo_name}.`);
+        }
 
         const github = new GitHub(process.env.GITHUB_TOKEN);
         let exists = 'false';
